@@ -1,7 +1,5 @@
-<center>
-    <h1>Previews in Linear</h1>
-    <p>Make it easy to access your previews in Linear with this GitHub Action.</p>
-</center>
+<h1 align="center">Previews in Linear</h1>
+<p align="center">Make it easy to access your previews in Linear with this GitHub Action.</p>
 
 ![Preview in Linear Action](./screenshot.png)
 
