@@ -9,6 +9,12 @@ import {
 // import { getLinearIssueId, setAttachment } from './linear';
 
 async function main() {
+    // Only run if the comment is on a pull request
+    if (!context.payload.issue?.pull_request) {
+        info('Skipping: comment is not on a pull request');
+        return;
+    }
+
     const ghIssueNumber = context.issue.number;
 
     const gitRef = await getGitRef(ghIssueNumber);

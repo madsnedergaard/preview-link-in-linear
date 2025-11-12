@@ -31793,6 +31793,11 @@ async function findLinearIdentifierInComment(ghIssueNumber) {
 
 // import { getLinearIssueId, setAttachment } from './linear';
 async function main() {
+    // Only run if the comment is on a pull request
+    if (!github.context.payload.issue?.pull_request) {
+        (0,core.info)('Skipping: comment is not on a pull request');
+        return;
+    }
     const ghIssueNumber = github.context.issue.number;
     const gitRef = await getGitRef(ghIssueNumber);
     const previewData = await getPreviewData(gitRef);
