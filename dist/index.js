@@ -31702,16 +31702,19 @@ async function getClient() {
     return (0,github.getOctokit)(API_TOKEN);
 }
 async function getGitRef(ghIssueNumber) {
+    (0,core.debug)(`Getting git ref for issue number: ${ghIssueNumber}`);
     const octokit = await getClient();
     const pull = await octokit.rest.pulls.get({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
         pull_number: ghIssueNumber,
     });
+    (0,core.debug)(`Pull data: ${JSON.stringify(pull.data)}`);
     return pull.data.head.ref;
 }
 async function getDeployment(ref) {
     const octokit = await getClient();
+    (0,core.debug)(`Getting deployment for ref: ${ref}`);
     const deployments = await octokit.rest.repos.listDeployments({
         owner: github.context.repo.owner,
         repo: github.context.repo.repo,
@@ -31720,6 +31723,7 @@ async function getDeployment(ref) {
         // Given that a new PR merge triggers a new SHA, it might not be needed
         // environment: 'preview',
     });
+    (0,core.debug)(`Deployments: ${JSON.stringify(deployments.data)}`);
     const deployment = deployments.data[0];
     if (!deployment) {
         console.error('No deployment found for the ref');
@@ -31731,7 +31735,9 @@ async function getDeployment(ref) {
     }
     return deployment;
 }
-async function getDeploymentData(deploymentId) {
+async function getDeploymentData(ref) {
+    const deployment = await getDeployment(ref);
+    const deploymentId = deployment.id;
     const octokit = await getClient();
     const statuses = await octokit.rest.repos.listDeploymentStatuses({
         owner: github.context.repo.owner,
@@ -31752,11 +31758,6 @@ async function getDeploymentData(deploymentId) {
         throw new Error('No environment URL found for the deployment');
     }
     return { url: status.environment_url, avatar: status.creator?.avatar_url };
-}
-async function getPreviewData(ref) {
-    const deployment = await getDeployment(ref);
-    const deploymentData = await getDeploymentData(deployment.id);
-    return deploymentData;
 }
 async function findLinearIdentifierInComment(ghIssueNumber) {
     // Find the relevant Linear issue comment inside the pull request from the bot
@@ -31800,11 +31801,11 @@ async function main() {
     }
     const ghIssueNumber = github.context.issue.number;
     const gitRef = await getGitRef(ghIssueNumber);
-    const previewData = await getPreviewData(gitRef);
+    const deploymentData = await getDeploymentData(gitRef);
     // TODO: Could we potentially get the linear identifier from context of the comment instead?
     // But maybe we want to actually have both, in case a preview provider adds a comment to the PR about a new deployment being available.
     const linearIdentifier = await findLinearIdentifierInComment(ghIssueNumber);
-    (0,core.info)(JSON.stringify(previewData));
+    (0,core.info)(JSON.stringify(deploymentData));
     (0,core.info)(JSON.stringify(linearIdentifier));
     // const issue = await getLinearIssueId(linearIdentifier);
     const title = github.context.payload.issue?.title;

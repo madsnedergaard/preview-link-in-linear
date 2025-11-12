@@ -1,5 +1,5 @@
 import { getOctokit, context } from '@actions/github';
-import { getInput } from '@actions/core';
+import { getInput, debug } from '@actions/core';
 
 async function getClient() {
     const API_TOKEN = getInput('GITHUB_TOKEN', { required: true });
@@ -7,18 +7,20 @@ async function getClient() {
 }
 
 export async function getGitRef(ghIssueNumber: number) {
+    debug(`Getting git ref for issue number: ${ghIssueNumber}`);
     const octokit = await getClient();
     const pull = await octokit.rest.pulls.get({
         owner: context.repo.owner,
         repo: context.repo.repo,
         pull_number: ghIssueNumber,
     });
+    debug(`Pull data: ${JSON.stringify(pull.data)}`);
     return pull.data.head.ref;
 }
 
 export async function getDeployment(ref: string) {
     const octokit = await getClient();
-
+    debug(`Getting deployment for ref: ${ref}`);
     const deployments = await octokit.rest.repos.listDeployments({
         owner: context.repo.owner,
         repo: context.repo.repo,
@@ -27,6 +29,7 @@ export async function getDeployment(ref: string) {
         // Given that a new PR merge triggers a new SHA, it might not be needed
         // environment: 'preview',
     });
+    debug(`Deployments: ${JSON.stringify(deployments.data)}`);
     const deployment = deployments.data[0];
     if (!deployment) {
         console.error('No deployment found for the ref');
@@ -39,7 +42,10 @@ export async function getDeployment(ref: string) {
     return deployment;
 }
 
-async function getDeploymentData(deploymentId: number) {
+export async function getDeploymentData(ref: string) {
+    const deployment = await getDeployment(ref);
+    const deploymentId = deployment.id;
+
     const octokit = await getClient();
     const statuses = await octokit.rest.repos.listDeploymentStatuses({
         owner: context.repo.owner,
@@ -61,12 +67,6 @@ async function getDeploymentData(deploymentId: number) {
         throw new Error('No environment URL found for the deployment');
     }
     return { url: status.environment_url, avatar: status.creator?.avatar_url };
-}
-
-export async function getPreviewData(ref: string) {
-    const deployment = await getDeployment(ref);
-    const deploymentData = await getDeploymentData(deployment.id);
-    return deploymentData;
 }
 
 export async function findLinearIdentifierInComment(ghIssueNumber: number) {
