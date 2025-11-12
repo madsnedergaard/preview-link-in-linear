@@ -15,7 +15,8 @@
     "private": true,
     "scripts": {
         "build": "ncc build src/index.ts",
-        "dev": "bun run src/index.ts"
+        "dev": "bun run src/index.ts",
+        "format": "prettier --write ."
     },
     "devDependencies": {
         "@types/bun": "latest",

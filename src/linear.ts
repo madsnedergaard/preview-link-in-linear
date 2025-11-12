@@ -18,13 +18,7 @@ type AttachmentData = {
     url: string;
     avatar: string | undefined;
 };
-export async function setAttachment({
-    issueId,
-    url,
-    title,
-    subtitle,
-    avatar,
-}: AttachmentData) {
+export async function setAttachment({ issueId, url, title, subtitle, avatar }: AttachmentData) {
     const result = await client.createAttachment({
         issueId,
         title,

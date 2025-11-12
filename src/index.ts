@@ -1,11 +1,7 @@
 import { context } from '@actions/github';
 import { debug, info } from '@actions/core';
 
-import {
-    findLinearIdentifierInComment,
-    getDeploymentData,
-    getGitSha,
-} from './github';
+import { findLinearIdentifierInComment, getDeploymentData, getGitSha } from './github';
 import { getLinearIssueId, setAttachment } from './linear';
 
 async function main() {
