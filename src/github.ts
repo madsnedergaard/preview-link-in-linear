@@ -20,7 +20,7 @@ export function getPullRequestInfoFromEvent(): PullRequestInfo | null {
         };
     } else if (context.eventName === 'deployment_status') {
         // Extract PR number from deployment payload
-        const pullRequests = context.payload.deployment?.pull_requests;
+        const pullRequests = context.payload.workflow_run?.pull_requests;
         if (!pullRequests || pullRequests.length === 0) {
             info('Skipping: deployment is not associated with a pull request');
             return null;

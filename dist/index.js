@@ -31737,7 +31737,7 @@ function getPullRequestInfoFromEvent() {
     }
     else if (github.context.eventName === 'deployment_status') {
         // Extract PR number from deployment payload
-        const pullRequests = github.context.payload.deployment?.pull_requests;
+        const pullRequests = github.context.payload.workflow_run?.pull_requests;
         if (!pullRequests || pullRequests.length === 0) {
             (0,core.info)('Skipping: deployment is not associated with a pull request');
             return null;
@@ -31971,7 +31971,7 @@ async function main() {
     (0,core.debug)(`Starting with context: ${JSON.stringify(github.context, null, 2)}`);
     const prInfo = getPullRequestInfoFromEvent();
     if (!prInfo) {
-        (0,core.debug)('Skipping: see previous logs for more information');
+        // Skipping due to various reasons, see logs for details
         return;
     }
     const { ghIssueNumber } = prInfo;
