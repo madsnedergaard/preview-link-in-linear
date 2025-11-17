@@ -45,9 +45,17 @@ jobs:
 
 ### Supported providers
 
-It supports any provider that use GitHub Deployments. The following have been tested and verified to work:
+The following providers have been tested and verified to work:
 
 - Vercel
+- Netlify
+- Cloudflare
+- Fly
+- Any custom setup that uses GitHub Deployments
+
+For other providers, you can use the `github-deployments` provider and set up tooling to create a deployment status on a pull request.
+
+Need something else? Feel free to open an issue or make a PR to add support for it.
 
 ## Getting started
 
@@ -55,5 +63,6 @@ TBD - the first one here is a crude PoC using API tokens instead of OAuth.
 
 ## Roadmap
 
+- Support multiple GitHub deployments for the same PR
 - Switch to using OAuth for authentication with Linear
 - Publish the action to the GitHub Marketplace
