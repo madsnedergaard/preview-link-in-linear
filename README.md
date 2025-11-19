@@ -1,5 +1,5 @@
-<h1 align="center">Previews in Linear</h1>
-<p align="center">Make it easy to access your previews in Linear with this GitHub Action.</p>
+<h1 align="center">Preview links in Linear</h1>
+<p align="center">Make it easy to access your preview environments in Linear with this GitHub Action.</p>
 
 <div align="center">
 
@@ -7,22 +7,19 @@
 
 </div>
 
----
+## Usage
 
 > [!IMPORTANT]
-> This project is still under development and not ready for production use. Create an issue if you're interested in helping out or have any feedback.
-
-## Usage
+> This project is still under development and not quite ready for production use. Create an issue if you're interested in helping out or have any feedback.
 
 ```yaml
 name: Preview Links in Linear
 # Run action when a new comment is added to a pull request (as we are expecting a Linear-bot comment with a link to the Linear issue)
+# and/or on deployment status changes if using a provider that supports it (Vercel, Fly, custom setup)
 on: [issue_comment, deployment_status]
 
 jobs:
     preview-links-in-linear:
-        # Ensures the action only runs on pull requests and not issues
-        if: ${{ github.event.issue.pull_request }}
         name: Preview Links in Linear
         runs-on: ubuntu-latest
         steps:
@@ -31,15 +28,29 @@ jobs:
             - name: Attach preview link to Linear issue
               uses: madsnedergaard/preview-link-in-linear@main
               with:
-                  provider: vercel # or netlify, cloudflare, github-deployments
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
+```
+
+### Configuration
+
+**Linear API key**
+
+Create a new Personal API key here: https://linear.app/electricitymaps/settings/account/security
+
+**Provider**
+
+The action will detect a provider automatically, but you can also manually specify one:
+
+```yaml
+with:
+    provider: vercel # or netlify, cloudflare, github-deployments
 ```
 
 ## How it works
 
 1. The action is triggered when a new comment is added to a pull request (as we are expecting a Linear-bot comment with a link to the Linear issue)
-2. It finds GitHub deployments on the pull request's branch
+2. It finds GitHub deployments or comments on the pull request
 3. It finds the Linear issue associated with the pull request from the comment
 4. It attaches the preview link to the Linear issue 🪄
 
@@ -50,19 +61,7 @@ The following providers have been tested and verified to work:
 - Vercel
 - Netlify
 - Cloudflare
-- Fly
+- Fly (using [the action in their guide](https://fly.io/docs/blueprints/review-apps-guide/))
 - Any custom setup that uses GitHub Deployments
 
-For other providers, you can use the `github-deployments` provider and set up tooling to create a deployment status on a pull request.
-
 Need something else? Feel free to open an issue or make a PR to add support for it.
-
-## Getting started
-
-TBD - the first one here is a crude PoC using API tokens instead of OAuth.
-
-## Roadmap
-
-- Support multiple GitHub deployments for the same PR
-- Switch to using OAuth for authentication with Linear
-- Publish the action to the GitHub Marketplace
