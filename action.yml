@@ -1,7 +1,7 @@
 name: Preview in Linear
-author: 'Mads Nedergaard <github@madsnedergaard.dk>'
+author: 'Mads Nedergaard <nedergaardmads@gmail.com>'
 description: >
-    Make it easy to access your previews in Linear with this GitHub Action.
+    Make it easy to access your preview environments in Linear with this GitHub Action.
 
 runs:
     using: 'node20'
@@ -13,7 +13,7 @@ branding:
 
 inputs:
     provider:
-        description: 'Provider to use for the preview (vercel, netlify, cloudflare, github-deployments, fly). If not provided, will be auto-detected.'
+        description: 'Provider to use for the preview environment (vercel, netlify, cloudflare, github-deployments, fly). If not provided, will be auto-detected.'
         required: false
     GITHUB_TOKEN:
         description: 'GitHub access token with Repo scope'

@@ -44,7 +44,7 @@ The action will detect a provider automatically, but you can also manually speci
 
 ```yaml
 with:
-    provider: vercel # or netlify, cloudflare, github-deployments
+    provider: vercel # or netlify, cloudflare, fly, github-deployments
 ```
 
 ## How it works
