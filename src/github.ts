@@ -7,7 +7,11 @@ export interface PullRequestInfo {
 }
 
 type Deployment = Awaited<ReturnType<typeof getDeployment>>;
-type PullRequest = Awaited<ReturnType<typeof getPullRequest>>;
+
+async function getClient() {
+    const API_TOKEN = getInput('GITHUB_TOKEN', { required: true });
+    return getOctokit(API_TOKEN);
+}
 
 export function getPullRequestInfoFromEvent(): PullRequestInfo | null {
     // Handle different event types
@@ -38,11 +42,6 @@ export function getPullRequestInfoFromEvent(): PullRequestInfo | null {
     }
 }
 
-async function getClient() {
-    const API_TOKEN = getInput('GITHUB_TOKEN', { required: true });
-    return getOctokit(API_TOKEN);
-}
-
 export async function getPullRequest(ghIssueNumber: number) {
     const octokit = await getClient();
     const pull = await octokit.rest.pulls.get({
@@ -52,14 +51,6 @@ export async function getPullRequest(ghIssueNumber: number) {
     });
     debug(`Pull data: ${JSON.stringify(pull.data)}`);
     return pull.data;
-}
-
-export function getGitSha(pull: PullRequest): string {
-    return pull.head.sha;
-}
-
-export function getPullRequestBranchName(pull: PullRequest): string {
-    return pull.head.ref;
 }
 
 export async function getDeployment(ref: string) {
@@ -91,8 +82,8 @@ export async function getDeployment(ref: string) {
  */
 export async function getGitHubDeploymentData(ghIssueNumber: number) {
     const pull = await getPullRequest(ghIssueNumber);
-    const gitSha = getGitSha(pull);
-    const branchName = getPullRequestBranchName(pull);
+    const gitSha = pull.head.sha;
+    const branchName = pull.head.ref;
     let deployment: Deployment | null = null;
     // First try to get the deployment by SHA
     deployment = await getDeployment(gitSha);
@@ -141,11 +132,8 @@ export async function getComments(ghIssueNumber: number) {
 }
 
 export async function findLinearIdentifierInComment(comments: any[]) {
-    // Find the relevant Linear issue comment inside the pull request from the bot
-
     for (const comment of comments) {
         if (comment.user?.login === 'linear[bot]') {
-            // Body example: <p><a href=\"https://linear.app/preview-test/issue/PRE-7/add-functionality-for-detecting-a-linear-identifier\">PRE-7 Add functionality for detecting a Linear identifier</a></p>
             const link = comment.body?.match(/https:\/\/linear\.app\/[^"]+/)?.[0];
 
             if (link) {
