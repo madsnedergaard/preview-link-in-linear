@@ -9,9 +9,6 @@
 
 ## Usage
 
-> [!IMPORTANT]
-> This project is still under development and not quite ready for production use. Create an issue if you're interested in helping out or have any feedback.
-
 ```yaml
 name: Preview Links in Linear
 # Run action when a new comment is added to a pull request (as we are expecting a Linear-bot comment with a link to the Linear issue)
@@ -31,6 +28,9 @@ jobs:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
                   LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
 ```
+
+> [!IMPORTANT]
+> This project is still in early development, so please create an issue if you encounter any problems or have any feedback. PRs are also welcome!
 
 ### Configuration
 
