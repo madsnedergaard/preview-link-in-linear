@@ -31898,6 +31898,13 @@ async function setAttachment({ issueId, url, title, subtitle, avatar }) {
 
 
 
+function createAttachmentTitle(ghIssueNumber) {
+    const inputTitle = (0,core.getInput)('title');
+    if (inputTitle) {
+        return inputTitle.replace('{PR_NUMBER}', ghIssueNumber.toString());
+    }
+    return `Preview of PR #${ghIssueNumber}`;
+}
 async function main() {
     (0,core.debug)(`Starting with context: ${JSON.stringify(github.context, null, 2)}`);
     const prInfo = getPullRequestInfoFromEvent();
@@ -31924,10 +31931,11 @@ async function main() {
         const pr = await getPullRequest(ghIssueNumber);
         title = pr.title;
     }
+    const attachmentTitle = createAttachmentTitle(ghIssueNumber);
     const attachment = await setAttachment({
         issueId: issue.id,
         url: previewData.url,
-        title: (0,core.getInput)('title') || `Preview of PR #${ghIssueNumber}`,
+        title: attachmentTitle,
         subtitle: title,
         avatar: previewData.avatar,
     });
