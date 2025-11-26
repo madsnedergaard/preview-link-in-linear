@@ -31838,7 +31838,7 @@ async function getComments(ghIssueNumber) {
 }
 async function findLinearIdentifierInComment(comments) {
     for (const comment of comments) {
-        if (comment.user?.login === 'linear[bot]') {
+        if (comment.user?.login === 'linear[bot]' || comment.performed_via_github_app?.name === 'Linear') {
             const link = comment.body?.match(/https:\/\/linear\.app\/[^"]+/)?.[0];
             if (link) {
                 const parts = link.replace('https://linear.app/', '').split('/');
